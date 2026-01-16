@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация завершена</title>
+</head>
+<body>
+    <h1>Авторизация прошла успешно!</h1>
+    <p>Проверьте адресную строку (URL) вашего браузера.</p>
+    <p>В ней вы увидите параметры <code>user_id</code> и <code>access_token</code>.</p>
+
+    <script>
+        // Небольшой скрипт, чтобы показать результат прямо на странице
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+        const accessToken = urlParams.get('access_token');
+
+        if (userId && accessToken) {
+            const resultDiv = document.createElement('div');
+            resultDiv.innerHTML = `<hr><p><strong>User ID:</strong> ${userId}</p><p><strong>Access Token:</strong> ${accessToken}</p>`;
+            document.body.appendChild(resultDiv);
+        } else {
+            const errorDiv = document.createElement('div');
+            errorDiv.innerHTML = `<hr><p><strong>Ошибка:</strong> Токены не получены. Проверьте настройки VK ID.</p>`;
+            document.body.appendChild(errorDiv);
+        }
+    </script>
+</body>
+</html>
