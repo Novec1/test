@@ -1,32 +1,38 @@
-<div>
-  <script nonce="csp_nonce" src="https://unpkg.com@<3.0.0/dist-sdk/umd/index.js"></script>
-  <script nonce="csp_nonce" type="text/javascript">
-    if ('VKIDSDK' in window) {
-      const VKID = window.VKIDSDK;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация через VK ID</title>
+</head>
+<body>
+    <h1>Войдите через VK</h1>
+    <!-- Контейнер для кнопки OneTap, ID должен совпадать с параметром container в JS -->
+    <div id="vk_id_container"></div>
 
-      VKID.Config.init({
-        app: 54410380,
-        redirectUrl: 'https://novec1.github.io', // Этот URL должен совпадать с тем, что в настройках VK ID
-        responseMode: VKID.ConfigResponseMode.Redirect, // <-- ИЗМЕНЕНО
-        source: VKID.ConfigSource.LOWCODE,
-        scope: 'email', // Добавьте 'email' или 'phone', если нужно получить эти данные
-      });
+    <script src="https://unpkg.com"></script>
+    <script type="text/javascript">
+        if ('VKIDSDK' in window) {
+            const VKID = window.VKIDSDK;
 
-      const oneTap = new VKID.OneTap();
+            VKID.Config.init({
+                app: 54410380,
+                // Важно: перенаправляем на callback.html, а не обратно на index.html
+                redirectUrl: 'https://novec1.github.io', 
+                responseMode: VKID.ConfigResponseMode.Redirect, // Используем редирект, чтобы не возиться с серверной логикой
+                source: VKID.ConfigSource.LOWCODE,
+            });
 
-      oneTap.render({
-        container: document.currentScript.parentElement,
-        showAlternativeLogin: true
-      })
-      .on(VKID.WidgetEvents.ERROR, vkidOnError)
-      .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-        // Здесь обработка не нужна, т.к. произойдет редирект
-      });
-    
-      function vkidOnError(error) {
-        console.error('VK ID Error:', error); // Выведет детали ошибки в консоль
-        // Можно показать сообщение об ошибке на странице
-      }
-    }
-  </script>
-</div>
+            const oneTap = new VKID.OneTap();
+
+            oneTap.render({
+                container: 'vk_id_container', // Указываем ID нашего div'а
+                showAlternativeLogin: true
+            })
+            .on(VKID.WidgetEvents.ERROR, function(error) {
+                console.error('VK ID Widget Error:', error);
+                alert('Произошла ошибка виджета. Проверьте настройки в VK ID.');
+            });
+        }
+    </script>
+</body>
+</html>
