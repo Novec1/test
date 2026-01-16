@@ -1,38 +1,40 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Авторизация через VK ID</title>
-</head>
-<body>
-    <h1>Войдите через VK</h1>
-    <!-- Контейнер для кнопки OneTap, ID должен совпадать с параметром container в JS -->
-    <div id="vk_id_container"></div>
+<div>
+  <script nonce="csp_nonce" src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
+  <script nonce="csp_nonce" type="text/javascript">
+    if ('VKIDSDK' in window) {
+      const VKID = window.VKIDSDK;
 
-    <script src="https://unpkg.com"></script>
-    <script type="text/javascript">
-        if ('VKIDSDK' in window) {
-            const VKID = window.VKIDSDK;
+      VKID.Config.init({
+        app: 54410380,
+        redirectUrl: 'https://novec1.github.io/test/',
+        responseMode: VKID.ConfigResponseMode.Callback,
+        source: VKID.ConfigSource.LOWCODE,
+        scope: '', // Заполните нужными доступами по необходимости
+      });
 
-            VKID.Config.init({
-                app: 54410380,
-                // Важно: перенаправляем на callback.html, а не обратно на index.html
-                redirectUrl: 'https://novec1.github.io', 
-                responseMode: VKID.ConfigResponseMode.Redirect, // Используем редирект, чтобы не возиться с серверной логикой
-                source: VKID.ConfigSource.LOWCODE,
-            });
+      const oneTap = new VKID.OneTap();
 
-            const oneTap = new VKID.OneTap();
+      oneTap.render({
+        container: document.currentScript.parentElement,
+        showAlternativeLogin: true
+      })
+      .on(VKID.WidgetEvents.ERROR, vkidOnError)
+      .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+        const code = payload.code;
+        const deviceId = payload.device_id;
 
-            oneTap.render({
-                container: 'vk_id_container', // Указываем ID нашего div'а
-                showAlternativeLogin: true
-            })
-            .on(VKID.WidgetEvents.ERROR, function(error) {
-                console.error('VK ID Widget Error:', error);
-                alert('Произошла ошибка виджета. Проверьте настройки в VK ID.');
-            });
-        }
-    </script>
-</body>
-</html>
+        VKID.Auth.exchangeCode(code, deviceId)
+          .then(vkidOnSuccess)
+          .catch(vkidOnError);
+      });
+    
+      function vkidOnSuccess(data) {
+        // Обработка полученного результата
+      }
+    
+      function vkidOnError(error) {
+        // Обработка ошибки
+      }
+    }
+  </script>
+</div>
