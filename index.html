@@ -1,15 +1,15 @@
 <div>
-  <script nonce="csp_nonce" src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
+  <script nonce="csp_nonce" src="https://unpkg.com@<3.0.0/dist-sdk/umd/index.js"></script>
   <script nonce="csp_nonce" type="text/javascript">
     if ('VKIDSDK' in window) {
       const VKID = window.VKIDSDK;
 
       VKID.Config.init({
         app: 54410380,
-        redirectUrl: 'https://novec1.github.io/test/',
-        responseMode: VKID.ConfigResponseMode.Callback,
+        redirectUrl: 'https://novec1.github.io', // Этот URL должен совпадать с тем, что в настройках VK ID
+        responseMode: VKID.ConfigResponseMode.Redirect, // <-- ИЗМЕНЕНО
         source: VKID.ConfigSource.LOWCODE,
-        scope: '', // Заполните нужными доступами по необходимости
+        scope: 'email', // Добавьте 'email' или 'phone', если нужно получить эти данные
       });
 
       const oneTap = new VKID.OneTap();
@@ -20,20 +20,12 @@
       })
       .on(VKID.WidgetEvents.ERROR, vkidOnError)
       .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-        const code = payload.code;
-        const deviceId = payload.device_id;
-
-        VKID.Auth.exchangeCode(code, deviceId)
-          .then(vkidOnSuccess)
-          .catch(vkidOnError);
+        // Здесь обработка не нужна, т.к. произойдет редирект
       });
     
-      function vkidOnSuccess(data) {
-        // Обработка полученного результата
-      }
-    
       function vkidOnError(error) {
-        // Обработка ошибки
+        console.error('VK ID Error:', error); // Выведет детали ошибки в консоль
+        // Можно показать сообщение об ошибке на странице
       }
     }
   </script>
